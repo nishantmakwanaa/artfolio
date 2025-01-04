@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from "react";
 import "./Globals.css";
-import logo from "../public/logo.png";
+import logo from "./Assets/logo.png";
 
 export const Nav = (props) => {
   const { search: initialSearch, handleNavSearch } = props;

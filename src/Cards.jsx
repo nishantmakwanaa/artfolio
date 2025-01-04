@@ -10,7 +10,6 @@ export const CombinedCardItem = (props) => {
   const [dislikeClassName, setDislikeClassName] = useState(false);
   const [likeCounter, setLikeCounter] = useState(parseInt(card.likes, 10));
   const [dislikeCounter, setDislikeCounter] = useState(parseInt(card.dislikes, 10));
-
   const [search, setSearch] = useState("");
 
   const recieveTagText = useCallback(
@@ -52,7 +51,6 @@ export const CombinedCardItem = (props) => {
 
   return (
     <div className="combined-card-container">
-
       <div id="cardContainer" className="card-container card-border" onClick={updateCardDetailsOnClick}>
         <div className="card-image-container">
           <img id="cardImage" className="card-image" alt={card.title} src={card.imgURL} />
@@ -93,6 +91,9 @@ export const CombinedCardItem = (props) => {
     </div>
   );
 };
+
+export const CardItem = CombinedCardItem;
+export const ZoomCardItem = CombinedCardItem;
 
 function createTagsList(tags, recieveTagText) {
   return tags.map((i) => (

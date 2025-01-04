@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useCallback } from "react";
 import ScrollLock from "react-scrolllock";
-import firebase from "./FireBase DB/FireBase";
-import { CardItem } from "./Cards";
+import { ref, get } from "firebase/database";
+import { CombinedCardItem } from "./Cards";
+import { database } from './FireBase DB/FireBase';
 import { Nav } from "./NavBar";
-import { FloatingArrow } from ".Gallery";
-import { ZoomCardItem } from "./Cards";
 import "./Globals.css";
 
-export const ArtGallery = (props) => {
+const ArtGallery = (props) => {
   const [cardItemsData, setCardItemsData] = useState([]);
   const [lock, setLock] = useState(false);
   const [search, setSearch] = useState("");
@@ -23,14 +22,15 @@ export const ArtGallery = (props) => {
   }, [props.windowWidth]);
 
   useEffect(() => {
-    firebase
-      .database()
-      .ref("Cards")
-      .once("value", (querySnapShot) => {
-        let data = querySnapShot.val() ? querySnapShot.val() : {};
-        let dataJSON = { ...data };
-
+    const cardsRef = ref(database, 'Cards');
+    get(cardsRef)
+      .then((snapshot) => {
+        const data = snapshot.val() ? snapshot.val() : {};
+        const dataJSON = { ...data };
         setCardItemsData(dataJSON);
+      })
+      .catch((error) => {
+        console.error("Error Fetching Card Data : ", error);
       });
   }, []);
 
@@ -49,81 +49,58 @@ export const ArtGallery = (props) => {
   }, []);
 
   function recieveCardFromDB(cardId) {
-    firebase
-      .database()
-      .ref("/Cards/" + cardId)
-      .once("value", (querySnapShot) => {
-        let data = querySnapShot.val() ? querySnapShot.val() : {};
-        let card = { ...data };
-
-        setCard(card);
+    const cardRef = ref(database, '/Cards/' + cardId);
+    get(cardRef)
+      .then((snapshot) => {
+        const data = snapshot.val() ? snapshot.val() : {};
+        setCard(data);
         setLock(true);
+      })
+      .catch((error) => {
+        console.error("Error Fetching Card Data : ", error);
       });
   }
 
-  function createCardItemsList(search, cardItemsData, recieveCardDetails) {
-    let values = Object.values(cardItemsData);
-    let list = search ? filterCards(values, search) : values;
+  function createCardItemsList(search, cardItemsData) {
+    let filteredData = Object.keys(cardItemsData).map((i) => cardItemsData[i]);
+    
+    if (search === "") {
+      return filteredData.map((card) => (
+        <CombinedCardItem
+          key={card.id}
+          currentCard={card}
+          handleTagSearch={recieveTagSearchText}
+          handleClickedCard={recieveCardDetails}
+        />
+      ));
+    } else {
 
-    return list.map((i) => (
-      <CardItem
-        currentCard={i}
-        key={i.id.toString()}
-        handleClickedCard={recieveCardDetails}
-      />
-    ));
+      let matchedData = filteredData.filter((i) => {
+        const titleMatch = i.title && i.title.toLowerCase().includes(search);
+        const tagMatch = i.tags && i.tags.some(tag => tag.toLowerCase().includes(search));
+        return titleMatch || tagMatch;
+      });
+
+      return matchedData.map((card) => (
+        <CombinedCardItem
+          key={card.id}
+          currentCard={card}
+          handleTagSearch={recieveTagSearchText}
+          handleClickedCard={recieveCardDetails}
+        />
+      ));
+    }
   }
-
-  function filterCards(values, search) {
-    return values.filter((i) => {
-      let titleFlag = i.title.toLowerCase().indexOf(search) !== -1;
-
-      let tagsFlag = false;
-      if (!titleFlag && i.tags) {
-        i.tags.forEach((tag) => {
-          if (!tagsFlag) {
-            tagsFlag = tag.toLowerCase().indexOf(search) !== -1;
-          }
-        });
-      }
-
-      return titleFlag || tagsFlag;
-    });
-  }
-
-  let cardItemsList = createCardItemsList(search, cardItemsData, recieveCardDetails);
 
   return (
-    <div id="ArtGallery" className="wide-art-gallery">
-      <div
-        className={
-          lock
-            ? wide
-              ? "art-gallery-background avoid-clicks"
-              : "art-gallery-background avoid-clicks no-scroll"
-            : ""
-        }
-      >
-        <Nav search={search} handleNavSearch={recieveNavSearchText} />
-        <div id="galleryContainer" className="gallery-container">
-          <ul id="gallery" className="gallery">
-            {cardItemsList}
-          </ul>
-          <p id="cardsCounter" className="cards-counter">
-            {cardItemsList.length} items found
-          </p>
-        </div>
-        {wide && lock && <ScrollLock />}
+    <div className="gallery-container">
+      <ScrollLock isActive={lock} />
+      <Nav searchText={recieveNavSearchText} />
+      <div id="gallery">
+        {createCardItemsList(search, cardItemsData)}
       </div>
-
-      {card === undefined || card.length === 0 || !lock ? (
-        <FloatingArrow />
-      ) : (
-        <div className={wide ? "zoom-card-wide" : "zoom-card-narrow"}>
-          <i className="fas fa-times exit-icon" onClick={() => setLock(false)} />
-          <ZoomCardItem card={card} handleTagSearch={recieveTagSearchText} />
-        </div>
-      )}
     </div>
   );
 };
+
+export default ArtGallery;
