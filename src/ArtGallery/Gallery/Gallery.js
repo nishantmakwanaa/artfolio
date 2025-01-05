@@ -3,37 +3,33 @@ import "./gallery.css";
 import firebase from "../../Firebase/firebase";
 import { CardItem } from "../CardItem/CardItem";
 
-export const Gallery = props => {
+export const Gallery = (props) => {
   const [cardItemsData, setCardItemsData] = useState([]);
+  const setClickedCard = useState(null);
 
-  const [clickedCard, setClickedCard] = useState([]);
 
   const recieveCardDetails = useCallback(
-    propsChild => {
+    (propsChild) => {
       let card = propsChild;
       console.log("recieveCardDetails", card);
       setClickedCard(card);
-      props.handleGalleryClickedCard(card);
     },
-    [] 
+    [setClickedCard] // Ensure setClickedCard is correctly used
   );
 
-  useEffect(
-    () => {
-      // DB Request, extract all the data from Firebase
-      firebase
-        .database()
-        .ref("Cards")
-        .once("value", querySnapShot => {
-          let data = querySnapShot.val() ? querySnapShot.val() : {};
-          let dataJSON = { ...data };
+  useEffect(() => {
+    // DB Request, extract all the data from Firebase
+    firebase
+      .database()
+      .ref("Cards")
+      .once("value", querySnapShot => {
+        let data = querySnapShot.val() ? querySnapShot.val() : {};
+        let dataJSON = { ...data };
 
-          // Initialize the state with all the data recieved from DB
-          setCardItemsData(dataJSON);
-        });
-    },
-    [] // Occurs when the state within is changing (once)
-  );
+        // Initialize the state with all the data received from DB
+        setCardItemsData(dataJSON);
+      });
+  }, []); // Run only once when component mounts
 
   let cardItemsList = createCardItemsList(
     props.search,
@@ -54,52 +50,30 @@ export const Gallery = props => {
 };
 
 /**
- * Extract JSON recieved from DB {cardItemsData}
+ * Extract JSON received from DB {cardItemsData}
  * init new {CardItem} component for each JSON object, as props
  * @param {State} cardItemsData
  */
 function createCardItemsList(search, cardItemsData, recieveCardDetails) {
   let values = Object.values(cardItemsData);
-  let list;
+  let list = search ? filterCards(values, search) : values;
 
-  if (search) {
-    list = filterCards(values, search);
-  } else {
-    list = values;
-  }
-
-  let cardItemsList = list.map(i => (
+  return list.map((i) => (
     <CardItem
       currentCard={i}
       key={i.id.toString()}
       handleClickedCard={recieveCardDetails}
     />
   ));
-
-  return cardItemsList;
 }
 
 /**
  * Filter the cards according to the search text
  */
 function filterCards(values, search) {
-  let filtered = values.filter(i => {
-    // Filter card by the title
-    let titleFlag = i.title.toLowerCase().indexOf(search) !== -1;
-
-    // Filter card by the tags, if not filtered by the title
-    let tagsFlag = false;
-    if (!titleFlag && i.tags) {
-      i.tags.filter(tag => {
-        if (!tagsFlag) {
-          tagsFlag = tag.toLowerCase().indexOf(search) !== -1;
-        }
-      });
-    }
-
-    // Return if the card chosen by the filtering
+  return values.filter((i) => {
+    const titleFlag = i.title.toLowerCase().includes(search.toLowerCase());
+    const tagsFlag = i.tags && i.tags.some(tag => tag.toLowerCase().includes(search.toLowerCase()));
     return titleFlag || tagsFlag;
   });
-
-  return filtered;
 }

@@ -4,17 +4,15 @@ import { Search } from "../Search/Search";
 import logo from "../../logo.png";
 
 export const Nav = (props) => {
-
-  const [search, setSearch] = useState(props.search);
+  const setSearch = useState(props.search);
 
   const recieveSearchText = useCallback(
     (propsChild) => {
+      setSearch(propsChild); // Fix here to use propsChild instead of props
 
-      setSearch(props);
-
-      props.handleNavSearch(propsChild);
+      props.handleNavSearch(propsChild); // Pass down the correct value
     },
-    [] 
+    [props, setSearch] // Include props and setSearch as dependencies
   );
 
   return (
