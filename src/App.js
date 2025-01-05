@@ -1,17 +1,12 @@
 import React, { useState, useEffect } from "react";
-import ArtGallery from './Gallery';
+import "./app.css";
+import { ArtGallery } from "./ArtGallery/ArtGallery";
 
 export default function App() {
   const { width } = useWindowDimensions();
 
-  const appStyle = {
-    textAlign: "center",
-    fontFamily: "Calibri",
-    listStyle: "none"
-  };
-
   return (
-    <div className="App" style={appStyle}>
+    <div className="App">
       <ArtGallery windowWidth={width} />
     </div>
   );
