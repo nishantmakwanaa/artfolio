@@ -14,11 +14,11 @@ export const Gallery = (props) => {
       console.log("recieveCardDetails", card);
       setClickedCard(card);
     },
-    [setClickedCard] // Ensure setClickedCard is correctly used
+    [setClickedCard]
   );
 
   useEffect(() => {
-    // DB Request, extract all the data from Firebase
+
     firebase
       .database()
       .ref("Cards")
@@ -26,10 +26,9 @@ export const Gallery = (props) => {
         let data = querySnapShot.val() ? querySnapShot.val() : {};
         let dataJSON = { ...data };
 
-        // Initialize the state with all the data received from DB
         setCardItemsData(dataJSON);
       });
-  }, []); // Run only once when component mounts
+  }, []);
 
   let cardItemsList = createCardItemsList(
     props.search,
@@ -49,11 +48,6 @@ export const Gallery = (props) => {
   );
 };
 
-/**
- * Extract JSON received from DB {cardItemsData}
- * init new {CardItem} component for each JSON object, as props
- * @param {State} cardItemsData
- */
 function createCardItemsList(search, cardItemsData, recieveCardDetails) {
   let values = Object.values(cardItemsData);
   let list = search ? filterCards(values, search) : values;
@@ -67,9 +61,6 @@ function createCardItemsList(search, cardItemsData, recieveCardDetails) {
   ));
 }
 
-/**
- * Filter the cards according to the search text
- */
 function filterCards(values, search) {
   return values.filter((i) => {
     const titleFlag = i.title.toLowerCase().includes(search.toLowerCase());

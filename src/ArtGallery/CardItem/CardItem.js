@@ -1,10 +1,6 @@
 import React from "react";
 import "./card-item.css";
 
-/**
- * Card component
- * @param {Card currentCard} props
- */
 function Card(props) {
   const currentCard = props.currentCard;
 
