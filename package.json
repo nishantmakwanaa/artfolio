@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
     "firebase": "^7.14.3",
     "gh-pages": "^2.2.0",
+    "prop-types": "^15.8.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
@@ -15,10 +17,10 @@
     "react-zoom-pan-pinch": "^1.6.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start", 
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "test": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts test",
+    "eject": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts eject",
     "predeploy": "yarn run build",
     "deploy": "gh-pages -d build",
     "postinstall": "echo 'NODE_OPTIONS=--openssl-legacy-provider' >> .env"
