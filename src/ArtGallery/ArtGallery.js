@@ -30,6 +30,7 @@ export const ArtGallery = (props) => {
 
   const recieveNavSearchText = useCallback(
     (props) => {
+
       setSearch(props);
     },
     []

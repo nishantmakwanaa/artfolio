@@ -4,15 +4,17 @@ import { Search } from "../Search/Search";
 import logo from "../../logo.png";
 
 export const Nav = (props) => {
-  const setSearch = useState(props.search);
+
+  const [search, setSearch] = useState(props.search);
 
   const recieveSearchText = useCallback(
     (propsChild) => {
-      setSearch(propsChild);
+
+      setSearch(props);
 
       props.handleNavSearch(propsChild);
     },
-    [props, setSearch]
+    [props] 
   );
 
   return (
@@ -20,15 +22,15 @@ export const Nav = (props) => {
       <div id="logoContainer" className="logo-container">
         <img id="logoImage" className="logo-image" alt="logo" src={logo} />
       </div>
-      <Search search={props.search} handleSearch={recieveSearchText} />
+      <Search search={search} handleSearch={recieveSearchText} />
       <div id="iconsContainer" className="icons-container">
         <div id="homeIconContainer" className="icon-container">
-          <a href="https://www.nishantworldwide.in/">
+          <a href="https://shir0206.github.io/ShirWeb/">
             <i id="home" className="fa fa-home icon bar-icon" />
           </a>
         </div>
         <div id="contactIconContainer" className="icon-container">
-          <a href="mailto:nishantmakwanacreations@gmail.com">
+          <a href="mailto:shir0206@gmail.com">
             <i id="contact" className="fa fa-envelope icon bar-icon" />
           </a>
         </div>

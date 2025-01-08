@@ -1,11 +1,11 @@
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
 
-  window.location.hostname === '[::1]' ||
+    window.location.hostname === '[::1]' ||
 
-  window.location.hostname.match(
-    /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
-  )
+    window.location.hostname.match(
+      /^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/
+    )
 );
 
 export function register(config) {
@@ -13,6 +13,7 @@ export function register(config) {
 
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location.href);
     if (publicUrl.origin !== window.location.origin) {
+
       return;
     }
 
@@ -26,10 +27,11 @@ export function register(config) {
         navigator.serviceWorker.ready.then(() => {
           console.log(
             'This Web App Is Being Served Cache-First By A Service ' +
-            'Worker. To Learn More, Visit https://www.nishantworldwide.in'
+              'Worker. To Learn More, Visit https://www.nishantworldwide.in'
           );
         });
       } else {
+
         registerValidSW(swUrl, config);
       }
     });
@@ -48,9 +50,10 @@ function registerValidSW(swUrl, config) {
         installingWorker.onstatechange = () => {
           if (installingWorker.state === 'installed') {
             if (navigator.serviceWorker.controller) {
+
               console.log(
                 'New Content Is Available And Will Be Used When All ' +
-                'Tabs For This Page Are Closed. See https://www.nishantworldwide.in'
+                  'Tabs For This Page Are Closed. See https://www.nishantworldwide.in'
               );
 
               if (config && config.onUpdate) {
@@ -85,12 +88,14 @@ function checkValidServiceWorker(swUrl, config) {
         response.status === 404 ||
         (contentType != null && contentType.indexOf('javascript') === -1)
       ) {
+
         navigator.serviceWorker.ready.then(registration => {
           registration.unregister().then(() => {
             window.location.reload();
           });
         });
       } else {
+
         registerValidSW(swUrl, config);
       }
     })

@@ -14,7 +14,9 @@ var firebaseConfig = {
 try {
   firebase.initializeApp(firebaseConfig);
 } catch (err) {
+
   if (!/already exists/.test(err.message)) {
+
   }
 }
 

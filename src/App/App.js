@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./app.css";
-import { ArtGallery } from "./ArtGallery/ArtGallery";
+import { ArtGallery } from "../ArtGallery/ArtGallery";
 
 export default function App() {
   const { width } = useWindowDimensions();
