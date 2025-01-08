@@ -25,12 +25,12 @@ export const Nav = (props) => {
       <Search search={search} handleSearch={recieveSearchText} />
       <div id="iconsContainer" className="icons-container">
         <div id="homeIconContainer" className="icon-container">
-          <a href="https://shir0206.github.io/ShirWeb/">
+          <a href="https://www.nishantworldwide.in/">
             <i id="home" className="fa fa-home icon bar-icon" />
           </a>
         </div>
         <div id="contactIconContainer" className="icon-container">
-          <a href="mailto:shir0206@gmail.com">
+          <a href="mailto:nishantmakwanacreations@gmail.com">
             <i id="contact" className="fa fa-envelope icon bar-icon" />
           </a>
         </div>
