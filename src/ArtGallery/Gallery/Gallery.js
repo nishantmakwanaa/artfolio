@@ -1,42 +1,43 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./gallery.css";
-import firebase from "../../Firebase/firebase"
+import firebase from "../../Firebase/firebase";
 import { CardItem } from "../CardItem/CardItem";
 
-export const Gallery = props => {
-
+export const Gallery = (props) => {
   const [cardItemsData, setCardItemsData] = useState([]);
-  const [setClickedCard] = useState(null);
+  const [clickedCard, setClickedCard] = useState(null);
 
+
+  const { handleGalleryClickedCard } = props;
 
   const recieveCardDetails = useCallback(
-    propsChild => {
+    (propsChild) => {
       let card = propsChild;
       console.log("recieveCardDetails", card);
       setClickedCard(card);
-  }, [setClickedCard]);
 
-  useEffect(
-    () => {
-
-      firebase
-        .database()
-        .ref("Cards")
-        .once("value", querySnapShot => {
-          let data = querySnapShot.val() ? querySnapShot.val() : {};
-          let dataJSON = { ...data };
-
-          setCardItemsData(dataJSON);
-        });
+      if (handleGalleryClickedCard) {
+        handleGalleryClickedCard(card);
+      }
+      if (handleGalleryClickedCard) {
+        handleGalleryClickedCard(card);
+      }
     },
-    []
+    [setClickedCard, handleGalleryClickedCard]
   );
 
-  let cardItemsList = createCardItemsList(
-    props.search,
-    cardItemsData,
-    recieveCardDetails
-  );
+  useEffect(() => {
+    firebase
+      .database()
+      .ref("Cards")
+      .once("value", (querySnapShot) => {
+        let data = querySnapShot.val() ? querySnapShot.val() : {};
+        let dataJSON = { ...data };
+        setCardItemsData(dataJSON);
+      });
+  }, []);
+
+  let cardItemsList = createCardItemsList(props.search, cardItemsData, recieveCardDetails);
 
   return (
     <div id="galleryContainer" className="gallery-container">
@@ -60,34 +61,23 @@ function createCardItemsList(search, cardItemsData, recieveCardDetails) {
     list = values;
   }
 
-  let cardItemsList = list.map(i => (
+  return list.map((i) => (
     <CardItem
       currentCard={i}
       key={i.id.toString()}
       handleClickedCard={recieveCardDetails}
     />
   ));
-
-  return cardItemsList;
 }
 
 function filterCards(values, search) {
-  let filtered = values.filter(i => {
+  return values.filter((i) => {
 
     let titleFlag = i.title.toLowerCase().indexOf(search) !== -1;
-
-    let tagsFlag = false;
-    if (!titleFlag && i.tags) {
-      i.tags.filter(tag => {
-        if (!tagsFlag) {
-          tagsFlag = tag.toLowerCase().indexOf(search) !== -1;
-        }
-        return tagsFlag;
-      });
-    }
+    let tagsFlag = i.tags
+      ? i.tags.some((tag) => tag.toLowerCase().indexOf(search) !== -1)
+      : false;
 
     return titleFlag || tagsFlag;
   });
-
-  return filtered;
 }

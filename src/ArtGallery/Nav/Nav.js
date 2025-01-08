@@ -4,17 +4,19 @@ import { Search } from "../Search/Search";
 import logo from "../../logo.png";
 
 export const Nav = (props) => {
-
-  const [search, setSearch] = useState(props.search);
+  const [search, setSearch] = useState(props.search || "");
 
   const recieveSearchText = useCallback(
     (propsChild) => {
-
-      setSearch(props);
+      if (typeof propsChild === "string") {
+        setSearch(propsChild.charAt(0).toUpperCase() + propsChild.slice(1));
+      } else {
+        setSearch("");
+      }
 
       props.handleNavSearch(propsChild);
     },
-    [props] 
+    [props]
   );
 
   return (

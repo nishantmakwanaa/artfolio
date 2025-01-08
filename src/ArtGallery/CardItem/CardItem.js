@@ -12,6 +12,7 @@ function Card(props) {
           className="card-image"
           alt={currentCard.title}
           src={currentCard.imgURL}
+          onClick={() => window.location.href = `mailto:${currentCard.email}`}
         />
       </div>
       <div className="overlay">
@@ -21,6 +22,16 @@ function Card(props) {
         </div>
         <div id="cardDateContainer" className="items card-date-container">
           <p id="cardDate">{currentCard.date}</p>
+        </div>
+        <div className="items artist-info-container">
+          <p id="artistName">{currentCard.artistName}</p>
+          <div className="social-links">
+            {currentCard.socialMediaLinks && currentCard.socialMediaLinks.map((link, index) => (
+              <a key={index} href={link.url} target="_blank" rel="noopener noreferrer">
+                <img src={link.icon} alt={link.name} className="social-icon" />
+              </a>
+            ))}
+          </div>
         </div>
       </div>
     </div>
